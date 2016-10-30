@@ -2,9 +2,15 @@
     display: inline-block;
     position: relative;
     border: 1px solid red;
-    height: 500px;
-    width: 500px;
+    height: 480px;
+    width: 640px;
+    float: left;
 }
+
+#code-container {
+    float: right;
+}
+
 .fps {
     position: absolute;
     bottom: 0.5em;

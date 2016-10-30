@@ -16,9 +16,14 @@
     </head>
     <body>
         <h1>Hello world!</h1>
-        <div class="canvas-container">
-            <canvas id="cvs"></canvas>
-            <div id="fps" class="fps"></div>
+        <div id="container">
+            <div class="canvas-container">
+                <canvas id="cvs"></canvas>
+                <div id="fps" class="fps"></div>
+            </div>
+            <div id="code-container">
+                <textarea id="code" rows="10" cols="50"></textarea>
+            </div>
         </div>
     </body>
     <script type="text/javascript">
@@ -32,5 +37,21 @@
             window.setTimeout(callback, 1000 / 60);
           };
 })();
+    </script>
+    <script type="text/javascript">
+        var cvs = document.getElementById("cvs");
+        var ctx = cvs.getContext("2d");
+        ctx.beginPath();
+        ctx.arc(95,50,40,0,2*Math.PI);
+        ctx.stroke();
+    </script>
+    <script type="text/javascript">
+       $('#code').on('change keyup paste', function() {
+            console.log(this.value);
+            var cvs = document.getElementById("cvs");
+            var ctx = cvs.getContext("2d");
+            ctx.clearRect(0, 0, cvs.width, cvs.height);
+            eval(this.value);
+        });
     </script>
 </html>

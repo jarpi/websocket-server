@@ -13,6 +13,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <!-- Latest compiled and minified JavaScript -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script src="socket.io/socket.io.js"></script>
     </head>
     <body>
         <h1>Hello world!</h1>
@@ -22,7 +23,11 @@
                 <div id="fps" class="fps"></div>
             </div>
             <div id="code-container">
-                <textarea id="code" rows="10" cols="50"></textarea>
+                <textarea id="code" rows="10" cols="50">
+ctx.beginPath();
+ctx.arc(95,50,40,0,2*Math.PI);
+ctx.stroke();
+                </textarea>
             </div>
         </div>
     </body>
@@ -38,20 +43,28 @@
           };
 })();
     </script>
-    <script type="text/javascript">
-        var cvs = document.getElementById("cvs");
-        var ctx = cvs.getContext("2d");
-        ctx.beginPath();
-        ctx.arc(95,50,40,0,2*Math.PI);
-        ctx.stroke();
-    </script>
-    <script type="text/javascript">
-       $('#code').on('change keyup paste', function() {
+   <script type="text/javascript">
+       $('#code').on('change keyup paste', function(evt, resend) {
+            console.dir(resend);
+            resend = resend === undefined ? true : false;
             console.log(this.value);
             var cvs = document.getElementById("cvs");
             var ctx = cvs.getContext("2d");
             ctx.clearRect(0, 0, cvs.width, cvs.height);
-            eval(this.value);
+            if (resend && window.socket) window.socket.emit('data', this.value);
+            try {
+                eval(this.value);
+            } catch (e) {
+                console.log('Error while trying to parse:' + this.value);
+            }
+        });
+    </script>
+    <script>
+        window.socket = io();
+        window.socket.on('data', function(msg) {
+            console.log('received: '  + msg);
+            $('#code').val(msg);
+            $('#code').trigger('change', [false]);
         });
     </script>
 </html>
